@@ -1,0 +1,72 @@
+<x-app-layout>
+    <x-slot name="header">
+        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
+            {{ __('Cập nhật tin tức') }}
+        </h2>
+    </x-slot>
+
+    <div class="py-12 flex-[1_1_80%] bg-white">
+        <div class="max-w-full  px-5">
+            <form action="{{route('tintuc.update', [$post->id])}}" method="POST" enctype="multipart/form-data">
+                @csrf
+                <!-- Session Status -->
+                <x-auth-session-status class="mb-4" :status="session('status')" />
+
+                <!-- Validation Errors -->
+                <x-auth-validation-errors class="mb-4" :errors="$errors" />
+                @csrf
+                <div class="my-2">
+                    <x-label :value="__('Tiêu đề')" for="title" />
+                    <x-input id="title" class="block mt-1 w-full" type="text" name="title" :value="$post->title"
+                        required autofocus />
+                </div>
+                <div class="my-2">
+                    <x-label :value="__('Đường dẫn')" for="slug" />
+                    <x-input id="slug" class="block mt-1 w-full" type="text" name="slug" :value="$post->slug" required
+                        autofocus />
+
+                </div>
+                <div class="my-2">
+                    <x-label :value="__('Mô tả ngắn')" for="short_description" />
+                    <x-btn.textarea name="short_description" id="short_description">{{$post->short_description}}</x-btn.textarea>
+                </div>
+                <style>
+                    .ck-content {
+                        min-height: 500px;
+                    }
+                </style>
+
+                <div class="my-2">
+                    <x-label :value="__('Nội dung')" for="content" />
+                    <x-btn.textarea name="content" id="content">{{$post->content}}</x-btn.textarea>
+                </div>
+                <script>
+                    CKEDITOR.replace( 'content' );
+                </script>
+                <div class="my-2">
+                    <x-btn.switch name="hot_post" value="0" :checked="$post->hot_post == 0 ? true : false">Tin tức hot</x-btn.switch>
+                </div>
+
+                <div class="my-2">
+                    <x-label :value="__('Danh mục')" for="category_id" />
+                    <x-btn.select name="category_id" id="category_id">
+                        <option value="">--Chọn--</option>
+                        @foreach ($categories as $category)
+                        <option value="{{$category->id}}" {{$post->category_id === $category->id ? 'selected' : ''}}>{{$category->name}}</option>
+                        @endforeach
+                    </x-btn.select>
+                </div>
+
+
+                <div class="my-2">
+                    <x-label :value="__('Hình ảnh')" for="image" />
+                    <img src="{{asset($post->image)}}" alt="" class="w-[200px] mb-5 block" id="output">
+                    <x-input type="file" onchange="document.getElementById('output').src = window.URL.createObjectURL(this.files[0])" name="image" id="image" />
+                </div>
+
+                <x-button type="submit" name="add" class="bg-gray-600">Cập nhật</x-button>
+            </form>
+        </div>
+    </div>
+</x-app-layout>
+
